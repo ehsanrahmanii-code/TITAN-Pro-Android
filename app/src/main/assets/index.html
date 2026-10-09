@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#050816">
+<title>TITAN Pro</title>
+<style>
+:root{--bg:#050816;--bg2:#0b1224;--a:#22d3ee;--b:#a78bfa;--c:#f472b6;--up:#22e5a0;--dn:#ff5d7a;--tx:#e8ecff;--mu:#8e98c9;--gl:rgba(255,255,255,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Tahoma,Vazirmatn,system-ui,sans-serif;background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--tx);min-height:100vh;padding:12px;padding-bottom:80px}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0b1224,#121a2e);border:1px solid #22d3ee44;display:grid;place-items:center;font-weight:800;color:var(--a);font-size:20px;box-shadow:0 0 20px #22d3ee33}
+h1{font-size:18px;letter-spacing:1px}h1 span{color:var(--a);font-size:12px;display:block;font-weight:400;letter-spacing:0}
+.badge{margin-inline-start:auto;background:var(--gl);border:1px solid #ffffff18;border-radius:999px;padding:6px 12px;font-size:11px;color:var(--mu)}
+.tabs{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px}
+.tab{flex:0 0 auto;border:1px solid #ffffff18;background:var(--gl);color:var(--tx);border-radius:999px;padding:8px 14px;font-size:12px}
+.tab.on{border-color:var(--a);color:var(--a);box-shadow:0 0 12px #22d3ee33}
+.card{background:rgba(255,255,255,.06);border:1px solid #ffffff14;border-radius:16px;padding:14px;margin-bottom:10px;backdrop-filter:blur(12px)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sym{font-weight:700;font-size:15px}.name{color:var(--mu);font-size:11px}
+.price{font-size:15px;font-variant-numeric:tabular-nums}
+.chg{font-size:12px;font-weight:700;padding:4px 8px;border-radius:8px}
+.chg.up{color:var(--up);background:#22e5a018}.chg.dn{color:var(--dn);background:#ff5d7a18}
+.tag{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;border:1px solid}
+.tag.LONG{color:var(--up);border-color:#22e5a055;background:#22e5a015}
+.tag.SHORT{color:var(--dn);border-color:#ff5d7a55;background:#ff5d7a15}
+.tag.WAIT{color:#fbbf24;border-color:#fbbf2455;background:#fbbf2415}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.kpi .card{text-align:center;padding:12px 8px;margin:0}
+.kpi b{display:block;font-size:18px;color:var(--a)}.kpi span{font-size:11px;color:var(--mu)}
+.bar{height:6px;background:#ffffff12;border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b));border-radius:99px}
+.sub{font-size:12px;color:var(--mu);line-height:1.6}
+.btn{width:100%;border:0;border-radius:14px;padding:14px;font-size:14px;font-weight:700;color:#04101a;background:linear-gradient(90deg,var(--a),var(--b));margin-top:8px}
+.footer{position:fixed;bottom:0;left:0;right:0;background:#050816ee;border-top:1px solid #ffffff12;padding:10px 14px;font-size:11px;color:var(--mu);text-align:center;backdrop-filter:blur(10px)}
+.loading{text-align:center;padding:40px 16px;color:var(--mu)}
+.spin{width:28px;height:28px;border:3px solid #ffffff22;border-top-color:var(--a);border-radius:50%;margin:0 auto 12px;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.detail .price-lg{font-size:28px;font-weight:800;margin:6px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini{background:#ffffff08;border-radius:12px;padding:10px;font-size:12px}
+.mini b{display:block;font-size:14px;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">T</div>
+  <h1>TITAN Pro <span>تحلیل زنده · بدون سفارش</span></h1>
+  <div class="badge" id="clock">—</div>
+</div>
+
+<div class="kpi">
+  <div class="card"><b id="kLong">0</b><span>LONG</span></div>
+  <div class="card"><b id="kShort">0</b><span>SHORT</span></div>
+  <div class="card"><b id="kWait">0</b><span>WAIT</span></div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab on" data-f="ALL">همه</button>
+  <button class="tab" data-f="LONG">LONG</button>
+  <button class="tab" data-f="SHORT">SHORT</button>
+  <button class="tab" data-f="WAIT">WAIT</button>
+</div>
+
+<div id="list"><div class="loading"><div class="spin"></div>در حال دریافت قیمت از Binance…</div></div>
+
+<div id="detail" style="display:none"></div>
+
+<button class="btn" id="refresh">به‌روزرسانی بازار</button>
+
+<div class="footer">TITAN Pro V75 · فقط تحلیل · داده از Binance Public API · سفارش واقعی غیرفعال</div>
+
+<script>
+const COINS=[
+  ["BTCUSDT","BTC","Bitcoin"],["ETHUSDT","ETH","Ethereum"],["BNBUSDT","BNB","BNB"],
+  ["XRPUSDT","XRP","XRP"],["SOLUSDT","SOL","Solana"],["ADAUSDT","ADA","Cardano"],
+  ["DOGEUSDT","DOGE","Dogecoin"],["AVAXUSDT","AVAX","Avalanche"],["LINKUSDT","LINK","Chainlink"],
+  ["NEARUSDT","NEAR","NEAR"],["SUIUSDT","SUI","Sui"],["AAVEUSDT","AAVE","Aave"],
+  ["BCHUSDT","BCH","Bitcoin Cash"],["XLMUSDT","XLM","Stellar"],["TRXUSDT","TRX","TRON"],
+  ["SHIBUSDT","SHIB","Shiba Inu"],["PEPEUSDT","PEPE","Pepe"],["WIFUSDT","WIF","dogwifhat"],
+  ["DOTUSDT","DOT","Polkadot"],["LTCUSDT","LTC","Litecoin"],["UNIUSDT","UNI","Uniswap"],
+  ["ATOMUSDT","ATOM","Cosmos"],["APTUSDT","APT","Aptos"],["ARBUSDT","ARB","Arbitrum"]
+];
+let ROWS=[], FILT="ALL", SEL=null;
+
+function pf(v){v=+v;if(!isFinite(v))return"—";if(v>=1000)return v.toLocaleString("en",{maximumFractionDigits:2});if(v>=1)return v.toFixed(4);return v.toFixed(6)}
+function scoreRow(t){
+  const ch=+t.priceChangePercent||0, last=+t.lastPrice||0, high=+t.highPrice||0, low=+t.lowPrice||0;
+  const range=high-low||1e-12, pos=(last-low)/range;
+  let conf=50+Math.max(-18,Math.min(18,ch*1.8));
+  conf+= (pos-0.5)*16;
+  conf=Math.max(8,Math.min(92,conf));
+  let decision="WAIT";
+  if(ch>1.2 && pos>0.55) decision="LONG";
+  else if(ch<-1.2 && pos<0.45) decision="SHORT";
+  else if(ch>2.5) decision="LONG";
+  else if(ch<-2.5) decision="SHORT";
+  const score=Math.round(50+ch*2+(pos-0.5)*20);
+  return {decision, conf:Math.round(conf), score:Math.max(1,Math.min(99,score)), ch, last, high, low, pos};
+}
+async function load(){
+  document.getElementById("list").innerHTML='<div class="loading"><div class="spin"></div>در حال دریافت قیمت از Binance…</div>';
+  try{
+    const r=await fetch("https://data-api.binance.vision/api/v3/ticker/24hr",{cache:"no-store"});
+    const all=await r.json();
+    const map={}; all.forEach(x=>{map[x.symbol]=x});
+    ROWS=COINS.map(([sym,base,name])=>{
+      const t=map[sym]||{};
+      const s=scoreRow(t);
+      return {sym,base,name, ...s, vol:+t.quoteVolume||0};
+    }).sort((a,b)=>b.conf-a.conf);
+    render();
+  }catch(e){
+    document.getElementById("list").innerHTML='<div class="card sub">خطا در اتصال به Binance. اینترنت را چک کنید و دوباره بزنید.</div>';
+  }
+  document.getElementById("clock").textContent=new Date().toLocaleTimeString("fa-IR");
+}
+function render(){
+  const rows=ROWS.filter(x=>FILT==="ALL"||x.decision===FILT);
+  const c={LONG:0,SHORT:0,WAIT:0}; ROWS.forEach(x=>{c[x.decision]++});
+  document.getElementById("kLong").textContent=c.LONG;
+  document.getElementById("kShort").textContent=c.SHORT;
+  document.getElementById("kWait").textContent=c.WAIT;
+  if(!rows.length){document.getElementById("list").innerHTML='<div class="card sub">موردی نیست</div>';return}
+  document.getElementById("list").innerHTML=rows.map(r=>\
+    `<div class="card" data-s="${r.sym}">
+      <div class="row">
+        <div><div class="sym">${r.base}/USDT</div><div class="name">${r.name}</div></div>
+        <div style="text-align:left">
+          <div class="price">${pf(r.last)}</div>
+          <div class="chg ${r.ch>=0?"up":"dn"}">${r.ch>=0?"+":""}${r.ch.toFixed(2)}٪</div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <span class="tag ${r.decision}">${r.decision}</span>
+        <span class="sub">اطمینان ${r.conf} · امتیاز ${r.score}</span>
+      </div>
+      <div class="bar"><i style="width:${r.conf}%"></i></div>
+    </div>`\
+  ).join("");
+  document.querySelectorAll("[data-s]").forEach(el=>{
+    el.onclick=()=>{SEL=el.getAttribute("data-s"); showDetail()}
+  });
+}
+function showDetail(){
+  const r=ROWS.find(x=>x.sym===SEL); if(!r)return;
+  const d=document.getElementById("detail");
+  d.style.display="block";
+  d.innerHTML=`<div class="card detail">
+    <div class="row"><div class="sym">${r.base}/USDT</div><span class="tag ${r.decision}">${r.decision}</span></div>
+    <div class="price-lg">${pf(r.last)}</div>
+    <div class="chg ${r.ch>=0?"up":"dn"}" style="display:inline-block">${r.ch>=0?"+":""}${r.ch.toFixed(2)}٪ ۲۴ساعته</div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="mini">بالاترین ۲۴س<b>${pf(r.high)}</b></div>
+      <div class="mini">پایین‌ترین ۲۴س<b>${pf(r.low)}</b></div>
+      <div class="mini">اطمینان<b>${r.conf}٪</b></div>
+      <div class="mini">امتیاز<b>${r.score}</b></div>
+    </div>
+    <p class="sub" style="margin-top:12px">سیگنال ساده بر اساس تغییر ۲۴ساعته و موقعیت قیمت در بازه روزانه. این نسخه موبایل مستقل است و سفارش اجرا نمی‌کند. برای موتور کامل چندتایم‌فریمی TITAN سرور Python را وصل کنید.</p>
+    <button class="btn" style="background:#ffffff18;color:#fff" onclick="document.getElementById('detail').style.display='none'">بستن</button>
+  </div>`;
+  d.scrollIntoView({behavior:"smooth"});
+}
+document.getElementById("tabs").onclick=e=>{
+  const t=e.target.closest("[data-f]"); if(!t)return;
+  FILT=t.getAttribute("data-f");
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===t));
+  render();
+};
+document.getElementById("refresh").onclick=load;
+load();
+setInterval(load,30000);
+</script>
+</body>
+</html>

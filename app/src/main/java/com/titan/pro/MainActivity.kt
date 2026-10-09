@@ -29,9 +29,9 @@ class MainActivity : AppCompatActivity() {
 
     private val prefs by lazy { getSharedPreferences("titan_pro", Context.MODE_PRIVATE) }
 
+    /** empty = use built-in offline dashboard from assets */
     private var serverUrl: String
-        get() = prefs.getString("server_url", getString(R.string.default_server_url))
-            ?: getString(R.string.default_server_url)
+        get() = prefs.getString("server_url", "") ?: ""
         set(value) = prefs.edit().putString("server_url", value.trim().trimEnd('/')).apply()
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -51,9 +51,7 @@ class MainActivity : AppCompatActivity() {
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
-        settings.setSupportZoom(true)
-        settings.builtInZoomControls = false
-        settings.displayZoomControls = false
+        settings.setSupportZoom(false)
         settings.mediaPlaybackRequiresUserGesture = false
         settings.userAgentString = settings.userAgentString + " TITAN-Pro-Android/75"
 
@@ -61,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 loadingPanel.visibility = View.VISIBLE
-                loadingText.setText(R.string.loading)
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
@@ -74,8 +71,8 @@ class MainActivity : AppCompatActivity() {
                 error: WebResourceError?
             ) {
                 if (request?.isForMainFrame == true) {
-                    loadingPanel.visibility = View.VISIBLE
-                    loadingText.setText(R.string.error_offline)
+                    // fallback to embedded dashboard
+                    loadEmbedded()
                 }
             }
         }
@@ -83,10 +80,20 @@ class MainActivity : AppCompatActivity() {
         loadDashboard()
     }
 
+    private fun loadEmbedded() {
+        loadingText.setText(R.string.loading)
+        webView.loadUrl("file:///android_asset/index.html")
+    }
+
     private fun loadDashboard() {
         loadingPanel.visibility = View.VISIBLE
         loadingText.setText(R.string.loading)
-        webView.loadUrl(serverUrl)
+        val remote = serverUrl
+        if (remote.isBlank()) {
+            loadEmbedded()
+        } else {
+            webView.loadUrl(remote)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -118,7 +125,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showServerDialog() {
         val input = EditText(this).apply {
-            setText(serverUrl)
+            setText(if (serverUrl.isBlank()) "" else serverUrl)
             hint = getString(R.string.server_hint)
             setPadding(48, 32, 48, 32)
             setTextColor(0xFFE8ECFF.toInt())
@@ -130,10 +137,11 @@ class MainActivity : AppCompatActivity() {
         }
         AlertDialog.Builder(this)
             .setTitle(R.string.server_dialog_title)
+            .setMessage("خالی بگذارید تا داشبورد داخلی استفاده شود.")
             .setView(container)
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 val url = input.text.toString().trim()
-                if (url.startsWith("http://") || url.startsWith("https://")) {
+                if (url.isEmpty() || url.startsWith("http://") || url.startsWith("https://")) {
                     serverUrl = url
                     loadDashboard()
                 } else {
