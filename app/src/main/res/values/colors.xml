@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="titan_bg">#050816</color>
+    <color name="titan_bg2">#0B1224</color>
+    <color name="titan_cyan">#22D3EE</color>
+    <color name="titan_violet">#A78BFA</color>
+    <color name="titan_pink">#F472B6</color>
+    <color name="titan_text">#E8ECFF</color>
+    <color name="titan_muted">#8E98C9</color>
+    <color name="ic_launcher_background">#050816</color>
+</resources>

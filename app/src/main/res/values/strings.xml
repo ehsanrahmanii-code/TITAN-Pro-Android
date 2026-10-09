@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TITAN Pro</string>
+    <string name="splash_tagline">تحلیل چندتایم‌فریمی · بدون اجرای سفارش</string>
+    <string name="default_server_url">http://127.0.0.1:5000</string>
+    <string name="menu_reload">بارگذاری مجدد</string>
+    <string name="menu_server">آدرس سرور</string>
+    <string name="menu_about">درباره</string>
+    <string name="server_dialog_title">آدرس سرور TITAN</string>
+    <string name="server_hint">مثال: http://127.0.0.1:5000 یا http://192.168.1.10:5000</string>
+    <string name="about_body">TITAN Pro V75\nتحلیل‌محور — بدون سفارش واقعی\nداده و کش فقط در پوشه LLL روی دستگاه سرور ذخیره می‌شود.</string>
+    <string name="loading">در حال اتصال به موتور TITAN…</string>
+    <string name="error_offline">سرور در دسترس نیست.\nابتدا TITAN را در Termux یا روی PC اجرا کنید.</string>
+</resources>

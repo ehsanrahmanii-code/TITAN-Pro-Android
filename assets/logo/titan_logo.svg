@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050816"/>
+      <stop offset="50%" stop-color="#0b1224"/>
+      <stop offset="100%" stop-color="#121a2e"/>
+    </linearGradient>
+    <linearGradient id="neon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#f472b6"/>
+    </linearGradient>
+    <linearGradient id="core" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Rounded dark background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- Outer ring -->
+  <circle cx="256" cy="256" r="188" fill="none" stroke="url(#neon)" stroke-width="6" opacity="0.35" filter="url(#glow)"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="url(#neon)" stroke-width="2.5" opacity="0.7"/>
+  <!-- Hexagon frame -->
+  <polygon points="256,78 390,155 390,310 256,387 122,310 122,155" fill="none" stroke="url(#neon)" stroke-width="3" opacity="0.55" filter="url(#softGlow)"/>
+  <!-- Letter T - bold geometric -->
+  <g filter="url(#glow)">
+    <path d="M150 150 H362 V198 H286 V362 H226 V198 H150 Z" fill="url(#core)"/>
+  </g>
+  <!-- Accent dots -->
+  <circle cx="256" cy="118" r="8" fill="#22d3ee" filter="url(#softGlow)"/>
+  <circle cx="380" cy="256" r="6" fill="#a78bfa" opacity="0.9"/>
+  <circle cx="132" cy="256" r="6" fill="#f472b6" opacity="0.9"/>
+  <!-- Small label bar -->
+  <rect x="176" y="400" width="160" height="28" rx="14" fill="#ffffff12" stroke="#22d3ee55" stroke-width="1"/>
+  <text x="256" y="419" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700" fill="#e8ecff" letter-spacing="3">PRO</text>
+</svg>

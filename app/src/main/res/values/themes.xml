@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.TitanPro" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/titan_cyan</item>
+        <item name="colorPrimaryVariant">@color/titan_violet</item>
+        <item name="colorSecondary">@color/titan_pink</item>
+        <item name="android:statusBarColor">@color/titan_bg</item>
+        <item name="android:navigationBarColor">@color/titan_bg</item>
+        <item name="android:windowBackground">@color/titan_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+    <style name="Theme.TitanPro.Splash" parent="Theme.TitanPro">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+</resources>

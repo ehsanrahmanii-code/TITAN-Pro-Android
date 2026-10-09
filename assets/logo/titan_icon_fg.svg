@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
+  <defs>
+    <linearGradient id="c" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+  </defs>
+  <!-- Safe zone adaptive icon foreground: T letter -->
+  <path d="M28 28 H80 V40 H60 V80 H48 V40 H28 Z" fill="url(#c)"/>
+  <circle cx="54" cy="22" r="3.5" fill="#22d3ee"/>
+</svg>
