@@ -16,17 +16,14 @@ android {
         versionName = "75.0-full"
 
         ndk {
-            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+            // arm64 only keeps APK smaller but still typically 30MB+
+            abiFilters += listOf("arm64-v8a")
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
         debug {
             applicationIdSuffix = ".debug"
@@ -43,6 +40,9 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
+        }
+        resources {
+            excludes += setOf("META-INF/INDEX.LIST", "META-INF/DEPENDENCIES")
         }
     }
 }
