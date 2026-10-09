@@ -1,38 +1,32 @@
 package com.titan.pro
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebChromeClient
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.chaquo.python.Python
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private lateinit var loadingPanel: LinearLayout
     private lateinit var loadingText: TextView
-
-    private val prefs by lazy { getSharedPreferences("titan_pro", Context.MODE_PRIVATE) }
-
-    /** empty = use built-in offline dashboard from assets */
-    private var serverUrl: String
-        get() = prefs.getString("server_url", "") ?: ""
-        set(value) = prefs.edit().putString("server_url", value.trim().trimEnd('/')).apply()
+    private val io = Executors.newSingleThreadExecutor()
+    private val ui = Handler(Looper.getMainLooper())
+    private var engineStarted = false
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,48 +45,47 @@ class MainActivity : AppCompatActivity() {
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
-        settings.setSupportZoom(false)
-        settings.mediaPlaybackRequiresUserGesture = false
-        settings.userAgentString = settings.userAgentString + " TITAN-Pro-Android/75"
+        settings.userAgentString = settings.userAgentString + " TITAN-Pro-Full/75"
 
         webView.webChromeClient = WebChromeClient()
         webView.webViewClient = object : WebViewClient() {
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                loadingPanel.visibility = View.VISIBLE
-            }
-
             override fun onPageFinished(view: WebView?, url: String?) {
                 loadingPanel.visibility = View.GONE
             }
-
-            override fun onReceivedError(
-                view: WebView?,
-                request: WebResourceRequest?,
-                error: WebResourceError?
-            ) {
-                if (request?.isForMainFrame == true) {
-                    // fallback to embedded dashboard
-                    loadEmbedded()
-                }
-            }
         }
 
-        loadDashboard()
+        startFullEngine()
     }
 
-    private fun loadEmbedded() {
-        loadingText.setText(R.string.loading)
-        webView.loadUrl("file:///android_asset/index.html")
-    }
-
-    private fun loadDashboard() {
+    private fun startFullEngine() {
         loadingPanel.visibility = View.VISIBLE
-        loadingText.setText(R.string.loading)
-        val remote = serverUrl
-        if (remote.isBlank()) {
-            loadEmbedded()
-        } else {
-            webView.loadUrl(remote)
+        loadingText.text = getString(R.string.loading_engine)
+        io.execute {
+            try {
+                val py = Python.getInstance()
+                val boot = py.getModule("titan_bootstrap")
+                if (!engineStarted) {
+                    boot.callAttr("start_titan", filesDir.absolutePath)
+                    engineStarted = true
+                }
+                ui.post { loadingText.text = getString(R.string.waiting_engine) }
+                val ready = boot.callAttr("wait_ready", "http://127.0.0.1:5000/health", 120.0).toBoolean()
+                ui.post {
+                    if (ready) {
+                        webView.loadUrl("http://127.0.0.1:5000/")
+                    } else {
+                        loadingText.text = getString(R.string.engine_timeout)
+                        // fallback embedded dashboard
+                        webView.loadUrl("file:///android_asset/index.html")
+                    }
+                }
+            } catch (e: Exception) {
+                ui.post {
+                    loadingText.text = getString(R.string.engine_error, e.message ?: "?")
+                    Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+                    webView.loadUrl("file:///android_asset/index.html")
+                }
+            }
         }
     }
 
@@ -104,52 +97,19 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_reload -> {
-                loadDashboard()
-                true
-            }
-            R.id.action_server -> {
-                showServerDialog()
+                webView.reload()
                 true
             }
             R.id.action_about -> {
                 AlertDialog.Builder(this)
                     .setTitle(R.string.app_name)
-                    .setMessage(R.string.about_body)
+                    .setMessage(R.string.about_full)
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun showServerDialog() {
-        val input = EditText(this).apply {
-            setText(if (serverUrl.isBlank()) "" else serverUrl)
-            hint = getString(R.string.server_hint)
-            setPadding(48, 32, 48, 32)
-            setTextColor(0xFFE8ECFF.toInt())
-            setHintTextColor(0xFF8E98C9.toInt())
-        }
-        val container = FrameLayout(this).apply {
-            addView(input)
-            setPadding(24, 8, 24, 0)
-        }
-        AlertDialog.Builder(this)
-            .setTitle(R.string.server_dialog_title)
-            .setMessage("خالی بگذارید تا داشبورد داخلی استفاده شود.")
-            .setView(container)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                val url = input.text.toString().trim()
-                if (url.isEmpty() || url.startsWith("http://") || url.startsWith("https://")) {
-                    serverUrl = url
-                    loadDashboard()
-                } else {
-                    Toast.makeText(this, R.string.server_hint, Toast.LENGTH_LONG).show()
-                }
-            }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
     }
 
     @Deprecated("Deprecated in Java")

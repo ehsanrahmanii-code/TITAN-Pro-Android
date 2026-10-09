@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TITAN Pro</string>
-    <string name="splash_tagline">تحلیل چندتایم‌فریمی · بدون اجرای سفارش</string>
-    <string name="default_server_url"></string>
+    <string name="splash_tagline">موتور کامل Python · بدون سفارش واقعی</string>
     <string name="menu_reload">بارگذاری مجدد</string>
-    <string name="menu_server">آدرس سرور (اختیاری)</string>
+    <string name="menu_server">آدرس سرور</string>
     <string name="menu_about">درباره</string>
-    <string name="server_dialog_title">آدرس سرور TITAN</string>
-    <string name="server_hint">خالی = داشبورد داخلی · یا http://192.168.x.x:5000</string>
-    <string name="about_body">TITAN Pro V75\nنسخه اندروید مستقل با قیمت زنده Binance.\nتحلیل‌محور — بدون سفارش واقعی.\nبرای موتور کامل Python می‌توانید سرور را وصل کنید.</string>
-    <string name="loading">در حال آماده‌سازی TITAN…</string>
-    <string name="error_offline">بارگذاری داشبورد داخلی…</string>
+    <string name="loading">در حال آماده‌سازی…</string>
+    <string name="loading_engine">در حال استخراج و راه‌اندازی موتور TITAN…</string>
+    <string name="waiting_engine">موتور در حال بالا آمدن روی پورت ۵۰۰۰…</string>
+    <string name="engine_timeout">موتور دیر پاسخ داد — داشبورد پشتیبان بارگذاری شد</string>
+    <string name="engine_error">خطای موتور: %1$s</string>
+    <string name="about_full">TITAN Pro V75 Full\nموتور کامل Flask + numpy + pandas داخل APK\nتحلیل‌محور — بدون اجرای سفارش\nداده در پوشه داخلی اپ (LLL)</string>
+    <string name="error_offline">بارگذاری داشبورد…</string>
+    <string name="server_dialog_title">سرور</string>
+    <string name="server_hint">فقط موتور داخلی</string>
 </resources>

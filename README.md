@@ -1,29 +1,17 @@
-# TITAN Pro Android
+# TITAN Pro Android — Full Engine APK
 
-**اپلیکیشن اندروید مستقل** — نصب کن و همان لحظه باز می‌شود.
+نسخهٔ **کامل** با موتور Python (همان `TITAN_PRO_V75_PWA.py`) داخل APK.
 
-> Analysis only · بدون اجرای سفارش
+- **Chaquopy** + Flask + numpy + pandas
+- نصب و باز کردن → موتور روی `127.0.0.1:5000` بالا می‌آید
+- حجم تقریبی APK: **۳۰ تا ۷۰ مگابایت** (بسته به ABI)
 
 ## دانلود APK
 
-1. برو به [Actions](https://github.com/ehsanrahmanii-code/TITAN-Pro-Android/actions)
-2. آخرین بیلد موفق **Build APK** را باز کن
-3. از بخش **Artifacts** فایل `titan-pro-debug` را دانلود و نصب کن
+1. [Actions](https://github.com/ehsanrahmanii-code/TITAN-Pro-Android/actions) → آخرین بیلد **موفق**
+2. Artifacts → `titan-pro-debug`
 
-یا از تب Actions → Run workflow صبر کن تا APK آماده شود.
+## نکته
 
-## ویژگی‌ها
-
-- باز شدن فوری بدون Termux و بدون سرور
-- قیمت زنده ۲۴ ارز از Binance Public API
-- سیگنال ساده LONG / SHORT / WAIT
-- لوگو و تم نئون شیک
-- اتصال اختیاری به سرور کامل TITAN Python
-
-## اندازه تقریبی
-
-APK دیباگ معمولاً حدود **۸ تا ۲۵ مگابایت** است (وابسته به ABI و minify).
-
-## هشدار
-
-فقط برای تحلیل آموزشی. توصیه سرمایه‌گذاری نیست.
+اولین اجرا ممکن است ۳۰–۹۰ ثانیه طول بکشد (استخراج موتور + اسکن اولیه).
+فقط تحلیل — سفارش واقعی اجرا نمی‌شود.

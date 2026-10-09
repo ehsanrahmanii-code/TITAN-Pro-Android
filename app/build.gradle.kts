@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.chaquo.python")
 }
 
 android {
@@ -9,10 +10,14 @@ android {
 
     defaultConfig {
         applicationId = "com.titan.pro"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 75
-        versionName = "75.0"
+        versionName = "75.0-full"
+
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+        }
     }
 
     buildTypes {
@@ -35,8 +40,24 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        viewBinding = false
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
+
+chaquopy {
+    defaultConfig {
+        version = "3.11"
+        pip {
+            install("requests")
+            install("flask")
+            install("numpy")
+            install("pandas")
+            install("urllib3")
+            install("websocket-client")
+        }
     }
 }
 
